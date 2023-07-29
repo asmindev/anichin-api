@@ -14,10 +14,10 @@ class Video(Parsing):
 
     def get_details(self):
         data = self.get_parsed_html(self.slug)
-        video = self.get_video(data)
+        video = self.__get_video(data)
         return video
 
-    def get_video(self, data):
+    def __get_video(self, data):
         video = data.find("select", {"class": "mirror"})
         if video:
             video = video.find_all("option")
@@ -34,12 +34,13 @@ class Video(Parsing):
             if r.status_code != 200:
                 return False
             results = r.json()
-            results = self.update_media_urls(results, "ct=4")
+            print(results)
+            results = self.__update_media_urls(results, "ct=4")
             return results
         else:
             return False
 
-    def update_media_urls(self, results, query_string):
+    def __update_media_urls(self, results, query_string):
         for media in results["medias"]:
             url_parts = urlparse(media["url"])
             query = dict(parse_qsl(url_parts.query))

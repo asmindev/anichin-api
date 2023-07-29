@@ -11,7 +11,7 @@ class Parsing(Session):
         super().__init__()
         self.url = getenv("HOST", "")
 
-    def get_html(self, slug):
+    def __get_html(self, slug):
         r = self.get(
             f"{self.url}/{slug}",
             headers={
@@ -22,7 +22,7 @@ class Parsing(Session):
         return r.text
 
     def get_parsed_html(self, url):
-        return BeautifulSoup(self.get_html(url), "html.parser")
+        return BeautifulSoup(self.__get_html(url), "html.parser")
 
     def parsing(self, data):
         return BeautifulSoup(data, "html.parser")

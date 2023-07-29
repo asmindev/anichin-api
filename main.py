@@ -21,12 +21,32 @@ def get_info(slug: Text):
     return data
 
 
+@app.get("/episode/{slug}")
+def get_episode(slug: Text):
+    try:
+        data = main.get_episode(slug)
+        if data:
+            return JSONResponse(
+                status_code=status.HTTP_200_OK,
+                content=data,
+            )
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={"error": "Not Found"},
+        )
+    except Exception as err:
+        print(err)
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content={"status": "error"},
+        )
+
+
 # get episode from url
-@app.get("/video/{slug}")
+@app.get("/video-source/{slug}")
 def get_video(slug: Text):
     try:
-
-        data = main.get_video(slug)
+        data = main.get_video_source(slug)
         if data:
             return JSONResponse(
                 status_code=status.HTTP_200_OK,

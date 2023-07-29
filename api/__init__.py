@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 from .utils.info import Info
 from .utils.video import Video
+from .utils.episode import Episode
 
 load_dotenv()
 
@@ -12,8 +13,11 @@ class Main:
     def get_info(self, slug):
         return Info(slug).to_json()
 
-    def get_video(self, slug):
+    def get_video_source(self, slug):
         return Video(slug).get_details()
+
+    def get_episode(self, slug):
+        return Episode(slug).get_details()
 
 
 if __name__ == "__main__":
