@@ -30,5 +30,7 @@ class Episode(Parsing):
             decode = b64decode(data).decode("utf-8")
             content = self.parsing(decode).find("iframe")
             if content:
-                return dict(name=name, url=content["src"])
+                return dict(
+                    name=name, url=content["src"], source=f"{self.url}{self.slug}"
+                )
         return None

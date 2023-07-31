@@ -2,6 +2,9 @@ from dotenv import load_dotenv
 from .utils.info import Info
 from .utils.video import Video
 from .utils.episode import Episode
+from .utils.home import Home
+from .utils.search import Search
+from .utils.genre import Genres
 
 load_dotenv()
 
@@ -18,6 +21,18 @@ class Main:
 
     def get_episode(self, slug):
         return Episode(slug).get_details()
+
+    def get_home(self, page=1):
+        return Home(page).get_details()
+
+    def search(self, query):
+        return Search(query).get_details()
+
+    def genres(self, genre=None, page=1):
+        genres = Genres()
+        if not genre:
+            return genres.list_genre()
+        return genres.get_genre(genre, page)
 
 
 if __name__ == "__main__":

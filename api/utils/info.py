@@ -80,7 +80,7 @@ class Info(Parsing):
             "sinopsis": sinopsis,
             "episode": episode,
         }
-        return info
+        return dict(result=info, source=self.history_url)
 
 
 if __name__ == "__main__":

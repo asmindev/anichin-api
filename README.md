@@ -4,25 +4,33 @@ AniChin API adalah sebuah proyek yang dikembangkan untuk memudahkan developer da
 
 ## API Reference
 
-#### Get info
+# FastAPI Donghua API
 
-```http
-  GET /info/{slug}
-```
+![FastAPI Logo](https://fastapi.tiangolo.com/img/logo-margin/logo-teal.png)
 
-| Parameter | Type     | Description                        |
-| :-------- | :------- | :--------------------------------- |
-| `slug`    | `string` | **Required**. Slug untuk informasi |
+This is a FastAPI-based API for fetching information about donghua (Chinese animation). It provides various endpoints to retrieve donghua data based on different criteria.
 
-#### Get video
+## Endpoints
 
-```http
-  GET /info/{slug}
-```
+| Endpoint                   | Description                   | Parameters                                                              | Response                                                            |
+| :------------------------- | :---------------------------- | :---------------------------------------------------------------------- | :------------------------------------------------------------------ |
+| `GET /`                    | Get the home page             | `page` (optional) - int: The page number for pagination                 | JSON containing donghua data                                        |
+| `GET /search`              | Search for donghua by query   | `q` - string (required): The search query                               | JSON containing search results                                      |
+| `GET /info/{slug}`         | Show detail of donghua        | `slug` - string (required): The unique identifier (slug) of the donghua | JSON containing detailed information about the specified donghua    |
+| `GET /genres`              | Show list of genres           | None                                                                    | JSON containing the list of genres                                  |
+| `GET /genre/{slug}`        | Show list of donghua by genre | `slug` - string (required): The slug of the genre                       | JSON containing the list of donghua for the specified genre         |
+| `GET /episode/{slug}`      | Show list of episode          | `slug` - string (required): The unique identifier (slug) of the donghua | JSON containing the list of episodes for the specified donghua      |
+| `GET /video-source/{slug}` | Show list of video source     | `slug` - string (required): The unique identifier (slug) of the donghua | JSON containing the list of video sources for the specified donghua |
 
-| Parameter | Type     | Description                        |
-| :-------- | :------- | :--------------------------------- |
-| `slug`    | `string` | **Required**. Slug untuk video url |
+## Error Handling
+
+The API handles various error scenarios and returns appropriate error responses in JSON format.
+
+| HTTP Status Code | Description                                               |
+| :--------------- | :-------------------------------------------------------- |
+| 400              | Bad Request - Invalid request or missing query parameters |
+| 404              | Not Found - The requested resource is not found           |
+| 500              | Internal Server Error - An internal server error occurs   |
 
 ## Run Locally
 
