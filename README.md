@@ -12,17 +12,16 @@ This is a FastAPI-based API for fetching information about donghua (Chinese anim
 
 ## Endpoints
 
-| Endpoint           | Description                 | Parameters                                                              | Response                                                         |
-| :----------------- | :-------------------------- | :---------------------------------------------------------------------- | :--------------------------------------------------------------- |
-| `GET /`            | Get the home page           | `page` (optional) - int: The page number for pagination                 | JSON containing donghua data                                     |
-| `GET /search`      | Search for donghua by query | `q` - string (required): The search query                               | JSON containing search results                                   |
-| `GET /info/{slug}` | Show detail of donghua      | `slug` - string (required): The unique identifier (slug) of the donghua | JSON containing detailed information about the specified donghua |
-| `GET /genres`      | Show list of genres         | None                                                                    | JSON containing the list of genres                               |
-|                    |                             | `page` (optional) - int: The page number for pagination                 |                                                                  |
-
-| `GET /genre/{slug}` | Show list of donghua by genre | `slug` - string (required): The slug of the genre | JSON containing the list of donghua for the specified genre |
-| `GET /episode/{slug}` | Show list of episode | `slug` - string (required): The unique identifier (slug) of the donghua | JSON containing the list of episodes for the specified donghua |
-| `GET /video-source/{slug}` | Show list of video source | `slug` - string (required): The unique identifier (slug) of the donghua | JSON containing the list of video sources for the specified donghua |
+| Endpoint                   | Description                   | Parameters                                                              | Response                                                            |
+| :------------------------- | :---------------------------- | :---------------------------------------------------------------------- | :------------------------------------------------------------------ |
+| `GET /`                    | Get the home page             | `page` (optional) - int: The page number for pagination                 | JSON containing donghua data                                        |
+| `GET /search`              | Search for donghua by query   | `q` - string (required): The search query                               | JSON containing search results                                      |
+| `GET /info/{slug}`         | Show detail of donghua        | `slug` - string (required): The unique identifier (slug) of the donghua | JSON containing detailed information about the specified donghua    |
+| `GET /genres`              | Show list of genres           | None                                                                    | JSON containing the list of genres                                  |
+| `GET /genre/{slug}`        | Show list of donghua by genre | `slug` - string (required): The slug of the genre                       | JSON containing the list of donghua for the specified genre         |
+|                            |                               | `page` (optional) - int: The page number for pagination                 |                                                                     |
+| `GET /episode/{slug}`      | Show list of episode          | `slug` - string (required): The unique identifier (slug) of the donghua | JSON containing the list of episodes for the specified donghua      |
+| `GET /video-source/{slug}` | Show list of video source     | `slug` - string (required): The unique identifier (slug) of the donghua | JSON containing the list of video sources for the specified donghua |
 
 ## Error Handling
 
