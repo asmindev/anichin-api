@@ -90,6 +90,7 @@ def get_genres(req: Request, slug: Text = Path(None, description="Slug of genre"
     """
     Show list of donghua by genre
     params: slug - string (required)
+    params: page (optional) - int
     return: JSON
 
     """
