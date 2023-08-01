@@ -1,5 +1,6 @@
 from .parsing import Parsing
 from urllib.parse import urlparse
+import re
 
 
 class Home(Parsing):
@@ -14,14 +15,17 @@ class Home(Parsing):
         for child in title.find_all():
             child.extract()
         title = title.text.strip()
+        type = item.find("div", {"class": "typez"})
         eps = item.find("span", {"class": "epx"})
-        thumbnail = item.find("img", {"data-lazy-src": True}).get("data-lazy-src")
+        thumbnail = item.find("img", {"src": True})
+        thumbnail = thumbnail.get("data-lazy-src", thumbnail.get("src"))
         url = item.find("a", {"title": True}).get("href")
         slug = urlparse(url).path.split("/")[1]
         return dict(
             title=title,
+            type=type.text.strip(),
             headline=headline.text.strip(),
-            # eps=eps.get("text", " ").strip(),
+            eps=re.sub("[^0-9]", "", eps.text.strip()) if eps else None,
             thumbnail=thumbnail,
             slug=slug,
         )

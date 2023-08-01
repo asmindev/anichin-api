@@ -2,10 +2,17 @@ from typing import Union, Text
 
 from fastapi import FastAPI, Request, status, Path
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from api import Main
 
 app = FastAPI()
 main = Main()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
@@ -113,10 +120,10 @@ def get_genres(req: Request, slug: Text = Path(None, description="Slug of genre"
 
 
 @app.get("/episode/{slug}")
-def get_episode(slug: Text):
+def get_episode(slug: Text = Path(None, description="Slug of episode")):
     """
-    Show list of episode
-    params: slug - string (required)
+    Get detail of episode
+    params: slug episode - string (required)
     return: JSON
 
     """

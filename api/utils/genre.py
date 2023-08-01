@@ -14,7 +14,8 @@ class Genres(Parsing):
         for child in title.find_all():
             child.extract()
         title = title.text.strip()
-        thumbnail = item.find("img", {"data-lazy-src": True}).get("data-lazy-src")
+        thumbnail = item.find("img", {"src": True})
+        thumbnail = thumbnail.get("data-lazy-src", thumbnail.get("src"))
         url = item.find("a", {"title": True}).get("href")
         slug = urlparse(url).path.split("/")[1]
         return dict(

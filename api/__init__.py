@@ -20,7 +20,7 @@ class Main:
         return Video(slug).get_details()
 
     def get_episode(self, slug):
-        return Episode(slug).get_details()
+        return Episode(slug).to_json()
 
     def get_home(self, page=1):
         return Home(page).get_details()
