@@ -59,7 +59,7 @@ def search(req: Request):
 def get_info(slug: Text = Path(None, description="Slug of donghua")):
     """
     Show detail of donghua
-    params: slug - string (required)
+    params: slug name of donghua - string (required)
     return: JSON
 
     """
@@ -96,7 +96,7 @@ def list_genres():
 def get_genres(req: Request, slug: Text = Path(None, description="Slug of genre")):
     """
     Show list of donghua by genre
-    params: slug - string (required)
+    params: slug genre - string (required)
     params: page (optional) - int
     return: JSON
 
