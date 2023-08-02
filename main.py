@@ -1,6 +1,6 @@
-from typing import Union, Text
+from typing import Text
 
-from fastapi import FastAPI, Request, status, Path
+from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from api import Main
@@ -56,7 +56,7 @@ def search(req: Request):
 
 # slug from url
 @app.get("/info/{slug}")
-def get_info(slug: Text = Path(None, description="Slug of donghua")):
+def get_info(slug: Text):
     """
     Show detail of donghua
     params: slug name of donghua - string (required)
@@ -93,7 +93,7 @@ def list_genres():
 
 
 @app.get("/genre/{slug}")
-def get_genres(req: Request, slug: Text = Path(None, description="Slug of genre")):
+def get_genres(req: Request, slug: Text):
     """
     Show list of donghua by genre
     params: slug genre - string (required)
@@ -120,7 +120,7 @@ def get_genres(req: Request, slug: Text = Path(None, description="Slug of genre"
 
 
 @app.get("/episode/{slug}")
-def get_episode(slug: Text = Path(None, description="Slug of episode")):
+def get_episode(slug: Text):
     """
     Get detail of episode
     params: slug episode - string (required)
@@ -172,3 +172,9 @@ def get_video(slug: Text):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             content={"error": "Internal Server Error"},
         )
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=8000)
