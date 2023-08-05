@@ -25,6 +25,12 @@ class Episode(Parsing):
             img = el.find("img")
             thumbnail = img.get("data-lazy-src", img.get("src"))
             return thumbnail
+        else:
+            el = content.find("div", {"class": "thumb"})
+            if el:
+                img = el.find("img")
+                thumbnail = img.get("data-lazy-src", img.get("src"))
+                return thumbnail
         return None
 
     def __get_genres(self, content):
@@ -56,8 +62,11 @@ class Episode(Parsing):
         return rating.split(" ")[1]
 
     def __get_sinopsis(self, data):
-        sinopsis = data.find("div", {"class": "desc mindes"}).get_text(strip=True)
-        return sinopsis
+        el = data.find("div", {"class": "desc mindes"})
+        if el:
+            sinopsis = el.get_text(strip=True)
+            return sinopsis
+        return None
 
     def __get_episodes(self, data):
         result = []
