@@ -2,7 +2,6 @@ from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from os import getenv
 from requests import Session
-import requests
 
 load_dotenv()
 
@@ -14,16 +13,11 @@ class Parsing(Session):
         self.history_url = None
 
     def __get_html(self, slug):
-        self.max_redirects = 60
-        r = self.get(
-            f"{self.url}/{slug}",
-            headers={
-                "User-Agent": getenv("USER_AGENT"),
-            },
-            allow_redirects=True,
-        )
-        self.history_url = r.url
-        return r.text
+        url = f"{self.url}/{slug}"
+        r = self.get(url)
+        self.history_url = url
+        resp = r.text
+        return resp
 
     def get_parsed_html(self, url):
         return BeautifulSoup(self.__get_html(url), "html.parser")

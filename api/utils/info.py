@@ -7,6 +7,7 @@ from time import strptime
 class Info(Parsing):
     def __init__(self, slug) -> None:
         super().__init__()
+        self.__thumbnail = None
         self.slug = slug
 
     def __get_info(self):
@@ -20,11 +21,15 @@ class Info(Parsing):
             "img"
         )
         thumbnail = thumbnail.get("data-lazy-src", thumbnail.get("src"))
+        self.__thumbnail = thumbnail
         return thumbnail
 
     def __get_genres(self, content):
-        genres = content.find("div", {"class": "genxed"}).find_all("a")
-        return list(map(lambda x: x.text, genres))
+        genres = content.find("div", {"class": "genxed"})
+        if genres:
+            genres = genres.find_all("a")
+            return list(map(lambda x: x.text, genres))
+        return []
 
     def __get_info_details(self, content):
         info = (
@@ -44,8 +49,13 @@ class Info(Parsing):
         return info
 
     def __get_rating(self, content):
-        rating = content.find("div", {"class": "rating"}).find("strong").text
-        return rating.split(" ")[1]
+        el = content.find("div", {"class": "rating"})
+        rating = el.find("strong")
+        if rating:
+            return rating.text.split(" ")[1]
+        else:
+            rating = el.find("div", {"class": "numscore"}).text
+            return rating
 
     def __get_sinopsis(self, data):
         sinopsis = (
@@ -70,6 +80,7 @@ class Info(Parsing):
                 subtitle=subtitle,
                 date=date,
                 episode=eps,
+                thumbnail=self.__thumbnail,
             )
             result.append(res)
         return result
@@ -78,10 +89,15 @@ class Info(Parsing):
         data = self.__get_info()
         content = data.find("div", {"class": "infox"})
         name = self.__get_name(content)
+        print(name)
         thumbnail = self.__get_thumbnail(data)
+        print(thumbnail)
         genres = self.__get_genres(content)
+        print(genres)
         info = self.__get_info_details(content)
+        print(info)
         rating = self.__get_rating(data)
+        print(rating)
         sinopsis = self.__get_sinopsis(data)
         episode = self.__get_episodes(data)
         info = {

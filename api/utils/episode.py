@@ -19,9 +19,20 @@ class Episode(Parsing):
     def __get_name(self, content):
         return content.find("h2", {"itemprop": "partOfSeries"}).text.strip()
 
+    def __get_thumbnail(self, content):
+        el = content.find("div", {"class": "thumbnail"})
+        if el:
+            img = el.find("img")
+            thumbnail = img.get("data-lazy-src", img.get("src"))
+            return thumbnail
+        return None
+
     def __get_genres(self, content):
-        genres = content.find("div", {"class": "genxed"}).find_all("a")
-        return list(map(lambda x: x.text, genres))
+        genres = content.find("div", {"class": "genxed"})
+        if genres:
+            genres = genres.find_all("a")
+            return list(map(lambda x: x.text, genres))
+        return []
 
     def __get_info_details(self, content):
         info = (
@@ -52,7 +63,9 @@ class Episode(Parsing):
         result = []
         episodes = data.find("div", {"class": "episodelist"}).find("ul").find_all("li")
         for item in episodes:
-            name = item.find("img", {"class": "ts-post-image"}).get("title")
+            x = item.find("img", {"class": "ts-post-image"})
+            name = x.get("title")
+            thumbnail = x.get("data-lazy-src", x.get("src"))
             slug = urlparse(item.find("a")["href"]).path.lstrip("/")
             tt = item.find("div", {"class": "playinfo"})
             span = tt.find("span")
@@ -69,6 +82,7 @@ class Episode(Parsing):
                 date = f"{date.tm_mon}/{date.tm_mday}/{date.tm_year}"
             res = dict(
                 name=name,
+                thumbnail=thumbnail,
                 slug=slug,
                 subtitle=subtitle,
                 date=date,
@@ -99,8 +113,10 @@ class Episode(Parsing):
     def to_json(self):
         data = self.__get_info()
         content = data.find("div", {"class": "infox"})
+
         player_list = self.__get_video(data)
         name = self.__get_name(content)
+        thumbnail = self.__get_thumbnail(data)
         genres = self.__get_genres(content)
         info = self.__get_info_details(content)
         rating = self.__get_rating(content)
@@ -112,6 +128,7 @@ class Episode(Parsing):
             "genre": genres,
             "rating": rating,
             "sinopsis": sinopsis,
+            "thumbnail": thumbnail,
             "episode": episode,
             "players": player_list,
         }
