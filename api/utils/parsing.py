@@ -12,15 +12,19 @@ class Parsing(Session):
         self.url = getenv("HOST", "")
         self.history_url = None
 
-    def __get_html(self, slug):
-        url = f"{self.url}/{slug}"
-        r = self.get(url)
+    def __get_html(self, slug, **kwargs):
+        if slug.startswith("/"):
+            url = f"{self.url}{slug}"
+        else:
+            url = f"{self.url}/{slug}"
+        print(kwargs)
+        r = self.get(url, **kwargs)
         self.history_url = url
         resp = r.text
         return resp
 
-    def get_parsed_html(self, url):
-        return BeautifulSoup(self.__get_html(url), "html.parser")
+    def get_parsed_html(self, url, **kwargs):
+        return BeautifulSoup(self.__get_html(url, **kwargs), "html.parser")
 
     def parsing(self, data):
         return BeautifulSoup(data, "html.parser")

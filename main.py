@@ -174,6 +174,26 @@ def get_video(slug: Text):
         )
 
 
+@app.get("/anime")
+def anime(req: Request):
+    """
+    Show list of anime
+    return: JSON
+
+    """
+    try:
+        req = req.query_params
+        todict = dict(req)
+        data = main.anime(params=todict)
+        return data
+    except Exception as err:
+        print(err)
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content={"error": "Internal Server Error"},
+        )
+
+
 if __name__ == "__main__":
     import uvicorn
 

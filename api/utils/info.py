@@ -11,6 +11,8 @@ class Info(Parsing):
         self.slug = slug
 
     def __get_info(self):
+        if "anixverse" in self.url:
+            return self.get_parsed_html(f"anime/{self.slug}")
         return self.get_parsed_html(self.slug)
 
     def __get_name(self, content):

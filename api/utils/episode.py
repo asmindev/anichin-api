@@ -19,6 +19,14 @@ class Episode(Parsing):
     def __get_name(self, content):
         return content.find("h2", {"itemprop": "partOfSeries"}).text.strip()
 
+    def __get_root(self, content):
+        content = content.find("div", {"class": "ts-breadcrumb"})
+        li = content.find_all("li")
+        href = li[1].find("a").get("href")
+        slug = urlparse(href).path
+        slug = slug.split("/")[-2] if slug.endswith("/") else slug.split("/")[-1]
+        return slug
+
     def __get_thumbnail(self, content):
         el = content.find("div", {"class": "thumbnail"})
         if el:
@@ -79,7 +87,7 @@ class Episode(Parsing):
             tt = item.find("div", {"class": "playinfo"})
             span = tt.find("span")
             episode_headline = span.get_text(strip=True) if span else ""
-            if episode_headline.startswith("Eps"):
+            if episode_headline.startswith("Ep"):
                 parts = episode_headline.split(" - ")
                 eps = re.sub("[^0-9]", "", parts[0])
                 subtitle = parts[1].strip() if len(parts) > 2 else None
@@ -140,5 +148,6 @@ class Episode(Parsing):
             "thumbnail": thumbnail,
             "episode": episode,
             "players": player_list,
+            "root": self.__get_root(data),
         }
         return dict(result=info, source=self.history_url)

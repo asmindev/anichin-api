@@ -5,6 +5,7 @@ from .utils.episode import Episode
 from .utils.home import Home
 from .utils.search import Search
 from .utils.genre import Genres
+from .utils.anime import Anime
 
 load_dotenv()
 
@@ -33,6 +34,9 @@ class Main:
         if not genre:
             return genres.list_genre()
         return genres.get_genre(genre, page)
+
+    def anime(self, **kwargs):
+        return Anime().get_details(**kwargs)
 
 
 if __name__ == "__main__":
