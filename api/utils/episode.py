@@ -20,9 +20,14 @@ class Episode(Parsing):
         return content.find("h2", {"itemprop": "partOfSeries"}).text.strip()
 
     def __get_root(self, content):
-        content = content.find("div", {"class": "ts-breadcrumb"})
-        li = content.find_all("li")
-        href = li[1].find("a").get("href")
+        div = content.find("div", {"class": "ts-breadcrumb"})
+        if div:
+            li = div.find_all("li")
+            href = li[1].find("a").get("href")
+        else:
+            content = content.find("span", {"class": "vcard author"})
+            href = content.find("a").get("href")
+        print(href)
         slug = urlparse(href).path
         slug = slug.split("/")[-2] if slug.endswith("/") else slug.split("/")[-1]
         return slug
@@ -132,13 +137,21 @@ class Episode(Parsing):
         content = data.find("div", {"class": "infox"})
 
         player_list = self.__get_video(data)
+        print(player_list)
         name = self.__get_name(content)
+        print(name)
         thumbnail = self.__get_thumbnail(data)
+        print(thumbnail)
         genres = self.__get_genres(content)
+        print(genres)
         info = self.__get_info_details(content)
+        print(info)
         rating = self.__get_rating(content)
+        print(rating)
         sinopsis = self.__get_sinopsis(data)
+        print(sinopsis)
         episode = self.__get_episodes(data)
+        print(episode)
         info = {
             **info,
             "name": name,

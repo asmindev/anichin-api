@@ -52,12 +52,14 @@ class Info(Parsing):
 
     def __get_rating(self, content):
         el = content.find("div", {"class": "rating"})
-        rating = el.find("strong")
-        if rating:
-            return rating.text.split(" ")[1]
-        else:
-            rating = el.find("div", {"class": "numscore"}).text
-            return rating
+        if el:
+            rating = el.find("strong")
+            if rating:
+                return rating.text.split(" ")[1]
+            else:
+                rating = el.find("div", {"class": "numscore"}).text
+                return rating
+        return None
 
     def __get_sinopsis(self, data):
         sinopsis = (
