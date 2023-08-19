@@ -25,9 +25,9 @@ class Episode(Parsing):
             li = div.find_all("li")
             href = li[1].find("a").get("href")
         else:
-            content = content.find("span", {"class": "vcard author"})
-            href = content.find("a").get("href")
-        print(href)
+            content = content.find("span", {"class": "year"})
+            # get last a tag
+            href = content.find_all("a")[-1].get("href")
         slug = urlparse(href).path
         slug = slug.split("/")[-2] if slug.endswith("/") else slug.split("/")[-1]
         return slug
