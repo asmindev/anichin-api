@@ -62,12 +62,10 @@ class Info(Parsing):
         return None
 
     def __get_sinopsis(self, data):
-        sinopsis = (
-            data.find("div", {"class": "entry-content", "itemprop": "description"})
-            .find("p")
-            .text
-        )
-        return sinopsis
+        sinopsis = data.find(
+            "div", {"class": "entry-content", "itemprop": "description"}
+        ).find("p")
+        return sinopsis.text if sinopsis else ""
 
     def __get_episodes(self, data):
         result = []
@@ -103,6 +101,7 @@ class Info(Parsing):
         rating = self.__get_rating(data)
         print(rating)
         sinopsis = self.__get_sinopsis(data)
+        print(sinopsis)
         episode = self.__get_episodes(data)
         info = {
             **info,
