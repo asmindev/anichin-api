@@ -1,61 +1,49 @@
 from typing import Text
 
-from fastapi import FastAPI, Request, status
-from fastapi.responses import JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
+from flask import Flask, jsonify, request
+from flask_cors import CORS
+
 from api import Main
 
-app = FastAPI()
+app = Flask(__name__)
 main = Main()
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+
+# cors
+CORS(app)
 
 
 @app.get("/")
-def read_root(req: Request):
+def read_root():
     """
     Get home page
     params: page (optional) - int
     return: JSON
 
     """
-    page = req.query_params.get("page")
+
+    page = request.args.get("page")
     try:
         if page and not page.isdigit():
-            return JSONResponse(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                content={"error": "Invalid page"},
-            )
-        return main.get_home(int(page) if page else 1)
+            return jsonify(message="error"), 400
+        return main.get_home(int(page) if page else 1), 200
     except Exception as err:
-        return JSONResponse(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            content={"error": str(err)},
-        )
+        return jsonify(message=err), 500
 
 
-@app.get("/search")
-def search(req: Request):
+@app.get("/search/<query>")
+def search(query):
     """
     Search donghua by query
-    params: q - string (required)
+    params: query - string (required)
     return: JSON
     """
-    query = req.query_params.get("q")
     if not query:
-        return JSONResponse(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            content={"error": "Missing query"},
-        )
-    return main.search(query)
+        return jsonify(message="missing query parameter"), 400
+    return main.search(query), 200
 
 
 # slug from url
-@app.get("/info/{slug}")
+@app.get("/info/<slug>")
 def get_info(slug: Text):
     """
     Show detail of donghua
@@ -64,15 +52,10 @@ def get_info(slug: Text):
 
     """
     try:
-        slug = slug
         data = main.get_info(slug)
-        return data
+        return data, 200
     except Exception as err:
-        print(err)
-        return JSONResponse(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            content={"error": "Internal Server Error"},
-        )
+        return jsonify(message=err), 500
 
 
 @app.get("/genres")
@@ -84,42 +67,33 @@ def list_genres():
     """
     try:
         data = main.genres()
-        return data
+        return data, 200
     except Exception as err:
-        return JSONResponse(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            content={"error": "Internal Server Error"},
-        )
+        return jsonify(message=err), 500
 
 
-@app.get("/genre/{slug}")
-def get_genres(req: Request, slug: Text):
+@app.get("/genre/<slug>")
+def get_genres(slug):
     """
     Show list of donghua by genre
     params: slug genre - string (required)
-    params: page (optional) - int
+    query: page (optional) - int
     return: JSON
 
     """
     try:
-        page = req.query_params.get("page")
+        page = request.args.get("page")
         if page and not page.isdigit():
-            return JSONResponse(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                content={"error": "Invalid page"},
-            )
+            return jsonify(message="error"), 400
 
         data = main.genres(slug, int(page) if page else 1)
-        return data
+        return jsonify(data), 200
     except Exception as err:
         print(err)
-        return JSONResponse(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            content={"error": "Internal Server Error"},
-        )
+        return jsonify(message=err), 500
 
 
-@app.get("/episode/{slug}")
+@app.get("/episode/<slug>")
 def get_episode(slug: Text):
     """
     Get detail of episode
@@ -130,24 +104,14 @@ def get_episode(slug: Text):
     try:
         data = main.get_episode(slug)
         if data:
-            return JSONResponse(
-                status_code=status.HTTP_200_OK,
-                content=data,
-            )
-        return JSONResponse(
-            status_code=status.HTTP_404_NOT_FOUND,
-            content={"error": "Not Found"},
-        )
+            return jsonify(data), 200
+        return jsonify(message="not found"), 404
     except Exception as err:
-        print(err)
-        return JSONResponse(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            content={"status": "error"},
-        )
+        return jsonify(message=err), 500
 
 
 # get episode from url
-@app.get("/video-source/{slug}")
+@app.get("/video-source/<slug>")
 def get_video(slug: Text):
     """
     Show list of video source
@@ -156,45 +120,32 @@ def get_video(slug: Text):
 
     """
     try:
+        print(slug)
         data = main.get_video_source(slug)
         if data:
-            return JSONResponse(
-                status_code=status.HTTP_200_OK,
-                content=data,
-            )
-        return JSONResponse(
-            status_code=status.HTTP_404_NOT_FOUND,
-            content={"error": "Not Found"},
-        )
+            return jsonify(data), 200
+        return jsonify(message="not found"), 404
     except Exception as err:
         print(err)
-        return JSONResponse(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            content={"error": "Internal Server Error"},
-        )
+        return jsonify(message=err), 500
 
 
 @app.get("/anime")
-def anime(req: Request):
+def anime():
     """
     Show list of anime
     return: JSON
 
     """
     try:
-        req = req.query_params
+        req = request.args
         todict = dict(req)
         data = main.anime(params=todict)
-        return data
+        return jsonify(data), 200
     except Exception as err:
         print(err)
-        return JSONResponse(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            content={"error": "Internal Server Error"},
-        )
+        return jsonify(message=err), 500
 
 
 if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    app.run(debug=True)

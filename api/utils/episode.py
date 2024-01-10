@@ -113,8 +113,46 @@ class Episode(Parsing):
             result.append(res)
         return result
 
+    def __execute_javascript_code(self, js_code):
+        # Extract variable values and dynamic value from JavaScript code
+        matches = re.search(
+            r"var (\w+) = (\[[^\]]+\]);.*?\)\s*-\s*(\d+)", js_code, re.DOTALL
+        )
+
+        if matches:
+            variable_values = eval(matches.group(2))
+            dynamic_value = int(matches.group(3))
+
+            # Decode and transform values
+            result = "".join(
+                [
+                    chr(
+                        int(
+                            "".join(
+                                filter(str.isdigit, b64decode(value).decode("utf-8"))
+                            )
+                        )
+                        - dynamic_value
+                    )
+                    for value in variable_values
+                ]
+            )
+            return result
+        else:
+            return ""
+
     def __get_video(self, data):
-        video = data.find("select", {"class": "mirror"})
+        data = data.find_all("script")
+        script = list(
+            filter(
+                lambda x: "document.write(decodeURIComponent(escape(" in x.text, data
+            )
+        )
+        if script:
+            script = script[0].text
+            data = self.__execute_javascript_code(script)
+            data = self.parsing(data)
+        video = data.find("select", {"name": "mirror"})
         if video:
             video = video.find_all("option")
             video = list(map(lambda x: self.__bs64(x["value"], x.text), video))
@@ -137,21 +175,13 @@ class Episode(Parsing):
         content = data.find("div", {"class": "infox"})
 
         player_list = self.__get_video(data)
-        print(player_list)
         name = self.__get_name(content)
-        print(name)
         thumbnail = self.__get_thumbnail(data)
-        print(thumbnail)
         genres = self.__get_genres(content)
-        print(genres)
         info = self.__get_info_details(content)
-        print(info)
         rating = self.__get_rating(content)
-        print(rating)
         sinopsis = self.__get_sinopsis(data)
-        print(sinopsis)
         episode = self.__get_episodes(data)
-        print(episode)
         info = {
             **info,
             "name": name,
